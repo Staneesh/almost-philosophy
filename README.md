@@ -1,6 +1,6 @@
 <center>
 
-![build status](https://img.shields.io/github/actions/workflow/status/staneesh/almost-philosophy/python-package.yml?branch=main)
+![build status](https://github.com/staneesh/almost-philosophy/actions/workflows/python-package.yml/badge.svg)
 ![license](https://img.shields.io/github/license/staneesh/almost-philosophy)
 ![commit activity](https://img.shields.io/github/commit-activity/m/staneesh/almost-philosophy)
 
