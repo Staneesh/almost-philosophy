@@ -6,3 +6,4 @@ yfinance
 pylint
 black
 pytest
+eurostat
