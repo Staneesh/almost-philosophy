@@ -3,9 +3,12 @@
 
 name: Lint, build and test
 
-# Run this only when opening a pull request to main
 on:
-  pull_request:
+  pull_request: # Run this when opening a pull request to main
+    branches:
+      - main
+
+  push:         # Or when pushing to main - post merge.
     branches:
       - main
 
