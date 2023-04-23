@@ -11,9 +11,9 @@ class TestAlmopCore(unittest.TestCase):
     Tests data pulling functionality of `Almop` library functions.
     """
 
-    def test_add_one(self):
-        """Simple test function"""
-        self.assertEqual(alc.add_one(4), 5)
+    def test_parse_config(self):
+        """Simple function checking if config parsing works"""
+        self.assertRaises(FileNotFoundError, alc.parse_config, "nonexistent")
 
 
 if __name__ == "__main__":
