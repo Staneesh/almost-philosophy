@@ -43,7 +43,7 @@ def load_dataset(
 
     if os.path.exists(dataset_path):
         try:
-            data = pd.read_csv(dataset_path)
+            data = pd.read_csv(dataset_path, index_col=0)
             if not data.empty:
                 logging.info(f"Successfully loaded {dataset_source_name} from disk.")
                 return data
@@ -68,7 +68,7 @@ def load_dataset(
 
     logging.info(f"Pulling {dataset_source_name} complete.")
     if not no_persist:
-        data.to_csv(dataset_path)
+        data.to_csv(dataset_path, index=False)
         logging.info(f"Persisted {dataset_source_name} dataset.")
     return data
 
@@ -91,6 +91,7 @@ def get_hpi(
         dataset_name="PRC_HPI_Q",
         no_persist=no_persist,
     )
+
     # Filter only if list of countries restricted by caller
     if only_these_country_codes:
         hpi = hpi.loc[hpi["geo\TIME_PERIOD"].isin(only_these_country_codes)]
@@ -106,3 +107,40 @@ def get_hpi(
     hpi = hpi.set_index("country", drop=True).T
 
     return hpi
+
+
+def get_gdp(
+    config: dict, only_these_country_codes: list = [], no_persist: bool = False
+):
+    """
+    Returns a DataFrame containing quarter-on-quarter
+    changes (in percent) for (optionally) restricted
+    list of country codes.
+
+    `no_persist` should be used for unit testing purposes only.
+    """
+
+    # Downloading House Price Index data
+    gdp = load_dataset(
+        config=config,
+        source=SourceType.EUROSTAT,
+        dataset_name="NAMQ_10_GDP",
+        no_persist=no_persist,
+    )
+
+    # Filter only if list of countries restricted by caller
+    if only_these_country_codes:
+        gdp = gdp.loc[gdp["geo\TIME_PERIOD"].isin(only_these_country_codes)]
+
+    gdp = gdp.loc[gdp["unit"] == "CP_MEUR"]  # Millions of Euro
+    gdp = gdp.loc[gdp["s_adj"] == "SCA"]  # Seasonally and calendar adjusted
+    gdp = gdp.loc[gdp["na_item"] == "B1GQ"]  # GDP at market price
+
+    # Remove unnecessary columns after filtering for specific values
+    gdp = gdp.iloc[:, 3:]
+    # Change a bogus column name to a more meaningful one
+    gdp = gdp.rename(columns={gdp.columns[0]: "country"})
+    # `country` should be a primary key & data transposed to have a row per time point
+    gdp = gdp.set_index("country", drop=True).T
+
+    return gdp
