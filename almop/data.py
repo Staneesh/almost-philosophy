@@ -43,7 +43,7 @@ def load_dataset(
 
     if os.path.exists(dataset_path):
         try:
-            data = pd.read_csv(dataset_path)
+            data = pd.read_csv(dataset_path, index=False)
             if not data.empty:
                 logging.info(f"Successfully loaded {dataset_source_name} from disk.")
                 return data
@@ -91,6 +91,7 @@ def get_hpi(
         dataset_name="PRC_HPI_Q",
         no_persist=no_persist,
     )
+
     # Filter only if list of countries restricted by caller
     if only_these_country_codes:
         hpi = hpi.loc[hpi["geo\TIME_PERIOD"].isin(only_these_country_codes)]
