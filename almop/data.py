@@ -1,6 +1,6 @@
 """
-`Almop` module is a collection of functions useful 
-for analysing causal structures of time series data.
+`Almop` data module is a collection of functions useful 
+for obtaining and caching time series datasets.
 """
 
 import eurostat as es
@@ -16,7 +16,7 @@ def get_hpi(only_these_country_codes: list = []):
     # Downloading House Price Index data
     hpi = es.get_data_df("PRC_HPI_Q")
     # Filter only if list of countries restricted by caller
-    if len(only_these_country_codes):
+    if not only_these_country_codes:
         hpi = hpi.loc[hpi["geo\TIME_PERIOD"].isin(only_these_country_codes)]
     # Consider relative QoQ change only
     hpi = hpi.loc[hpi["unit"] == "RCH_Q"]
@@ -30,10 +30,3 @@ def get_hpi(only_these_country_codes: list = []):
     hpi = hpi.set_index("country", drop=True).T
 
     return hpi
-
-
-def add_one(number):
-    """
-    Test function
-    """
-    return number + 1
