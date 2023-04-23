@@ -43,7 +43,7 @@ def load_dataset(
 
     if os.path.exists(dataset_path):
         try:
-            data = pd.read_csv(dataset_path, index=False)
+            data = pd.read_csv(dataset_path, index_col=0)
             if not data.empty:
                 logging.info(f"Successfully loaded {dataset_source_name} from disk.")
                 return data
@@ -68,7 +68,7 @@ def load_dataset(
 
     logging.info(f"Pulling {dataset_source_name} complete.")
     if not no_persist:
-        data.to_csv(dataset_path)
+        data.to_csv(dataset_path, index=False)
         logging.info(f"Persisted {dataset_source_name} dataset.")
     return data
 
