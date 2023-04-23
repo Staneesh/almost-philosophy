@@ -7,3 +7,4 @@ pylint
 black
 pytest
 eurostat
+tomli
