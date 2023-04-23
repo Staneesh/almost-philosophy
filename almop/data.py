@@ -12,52 +12,84 @@ import pathlib
 
 
 class SourceType(Enum):
+    """Supported data source types"""
+
     EUROSTAT = 1
 
 
 def dataset_persist_dir_full(config: dict):
+    """Get the path to the directory where `almop` stores datasets."""
     persist_dir: str = config["dataset_persist_dir"]
     if persist_dir.endswith("/"):
         persist_dir = persist_dir[:-1]
     return f"{persist_dir}/almop_datasets"
 
 
-def load_dataset(config: dict, source: SourceType, dataset_name: str):
+def load_dataset(
+    config: dict, source: SourceType, dataset_name: str, no_persist: bool = False
+):
+    """
+    Loads a dataset from a given source from the internet and persists it to disk.
+
+    Expects that `config` has `dataset_persist_dir` key which is pointing to a proper path on disk.
+    `no_persist` flag should be used for unit testing purposes only.
+    """
+
     dataset_subdir = (
-        f"{dataset_persist_dir_full(config)}/{source.name.lower()}/{dataset_name}/"
+        f"{dataset_persist_dir_full(config)}/{source.name.lower()}/{dataset_name}"
     )
     dataset_path = f"{dataset_subdir}/data.csv"
+    dataset_source_name = f"'{source.name.lower()}/{dataset_name}'"
 
     if os.path.exists(dataset_path):
         try:
-            data = pd.read_csv()
-            if data:
+            data = pd.read_csv(dataset_path)
+            if not data.empty:
+                logging.info(f"Successfully loaded {dataset_source_name} from disk.")
                 return data
         except:
             pass  # Do nothing if loading from file failed. We will not early-return and the dataset will be loaded later.
     else:
         logging.info(
-            f"Directory for persisting {dataset_name} not found. Creating {dataset_subdir}..."
+            f"Directory for persisting '{dataset_name}' not found. Creating '{dataset_subdir}'..."
         )
-        pathlib.Path(dataset_subdir).mkdir(parents=True, exist_ok=True)
+        if not no_persist:
+            pathlib.Path(dataset_subdir).mkdir(parents=True, exist_ok=True)
 
     # At this point the directory for data is surely created and the dataset needs
     # to be re-loaded either because it's not there at all or `pandas` is unable to read it.
-    data = es.get_data_df(dataset_name)  # This can throw!
-    data.to_csv(dataset_path)
+    logging.info(f"Pulling {dataset_source_name} from the internet...")
+    if source == SourceType.EUROSTAT:
+        data = es.get_data_df(dataset_name)  # This can throw!
+        if data.empty:
+            raise ValueError(f"Could not load {dataset_source_name} dataset.")
+    else:
+        raise ValueError(f"Data source {source} is not supported!")
+
+    logging.info(f"Pulling {dataset_source_name} complete.")
+    if not no_persist:
+        data.to_csv(dataset_path)
+        logging.info(f"Persisted {dataset_source_name} dataset.")
     return data
 
 
-def get_hpi(config: dict, only_these_country_codes: list = []):
+def get_hpi(
+    config: dict, only_these_country_codes: list = [], no_persist: bool = False
+):
     """
     Returns a DataFrame containing quarter-on-quarter
     changes (in percent) for (optionally) restricted
     list of country codes.
+
+    `no_persist` should be used for unit testing purposes only.
     """
 
     # Downloading House Price Index data
     hpi = load_dataset(
-        config=config, source=SourceType.EUROSTAT, dataset_name="PRC_HPI_Q"
+        config=config,
+        source=SourceType.EUROSTAT,
+        dataset_name="PRC_HPI_Q",
+        no_persist=no_persist,
     )
     # Filter only if list of countries restricted by caller
     if only_these_country_codes:
