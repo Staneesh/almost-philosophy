@@ -102,7 +102,7 @@ def get_hpi(
     # Remove unnecessary columns after filtering for specific values
     hpi = hpi.iloc[:, 3:]
     # Change a bogus column name to a more meaningful one
-    hpi = hpi.rename(columns={hpi.columns[0]: "time"})
+    hpi = hpi.rename(columns={hpi.columns[0]: "country"})
     # `country` should be a primary key & data transposed to have a row per time point
     hpi = hpi.set_index("country", drop=True).T
 
@@ -139,7 +139,7 @@ def get_gdp(
     # Remove unnecessary columns after filtering for specific values
     gdp = gdp.iloc[:, 3:]
     # Change a bogus column name to a more meaningful one
-    gdp = gdp.rename(columns={gdp.columns[0]: "time"})
+    gdp = gdp.rename(columns={gdp.columns[0]: "country"})
     # `country` should be a primary key & data transposed to have a row per time point
     gdp = gdp.set_index("country", drop=True).T
 
@@ -176,7 +176,7 @@ def get_infl(
     # Remove unnecessary columns after filtering for specific values
     infl = infl.iloc[:, 3:]
     # Change a bogus column name to a more meaningful one
-    infl = infl.rename(columns={infl.columns[0]: "time"})
+    infl = infl.rename(columns={infl.columns[0]: "country"})
     # `country` should be a primary key & data transposed to have a row per time point
     infl = infl.set_index("country", drop=True).T
 
