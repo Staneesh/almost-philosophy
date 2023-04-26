@@ -144,3 +144,37 @@ def get_gdp(
     gdp = gdp.set_index("country", drop=True).T
 
     return gdp
+
+
+def get_infl(
+    config: dict, only_these_country_codes: list = [], no_persist: bool = False
+):
+    """
+    TODO
+    `no_persist` should be used for unit testing purposes only.
+    """
+
+    # Downloading House Price Index data
+    infl = load_dataset(
+        config=config,
+        source=SourceType.EUROSTAT,
+        dataset_name="EI_CPHI_M",
+        no_persist=no_persist,
+    )
+
+    # Filter only if list of countries restricted by caller
+    if only_these_country_codes:
+        infl = infl.loc[infl["geo\TIME_PERIOD"].isin(only_these_country_codes)]
+
+    infl = infl.loc[infl["unit"] == "RT12"]  # TODO
+    infl = infl.loc[infl["s_adj"] == "NSA"]  # Not Seasonally Adjusted (NSA)
+    infl = infl.loc[infl["indic"] == "CP-HI00"]  # TODO
+
+    # Remove unnecessary columns after filtering for specific values
+    infl = infl.iloc[:, 3:]
+    # Change a bogus column name to a more meaningful one
+    infl = infl.rename(columns={infl.columns[0]: "country"})
+    # `country` should be a primary key & data transposed to have a row per time point
+    infl = infl.set_index("country", drop=True).T
+
+    return infl
