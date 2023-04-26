@@ -150,11 +150,14 @@ def get_infl(
     config: dict, only_these_country_codes: list = [], no_persist: bool = False
 ):
     """
-    TODO
+    Returns a DataFrame containing quarter-on-quarter
+    changes (growth rate) of Harmonised index of consumer prices
+    for (optionally) restricted list of country codes.
+
     `no_persist` should be used for unit testing purposes only.
     """
 
-    # Downloading House Price Index data
+    # Downloading Harmonised index of consumer prices data
     infl = load_dataset(
         config=config,
         source=SourceType.EUROSTAT,
@@ -166,9 +169,9 @@ def get_infl(
     if only_these_country_codes:
         infl = infl.loc[infl["geo\TIME_PERIOD"].isin(only_these_country_codes)]
 
-    infl = infl.loc[infl["unit"] == "RT12"]  # TODO
+    infl = infl.loc[infl["unit"] == "RT12"]  # Growth Rate
     infl = infl.loc[infl["s_adj"] == "NSA"]  # Not Seasonally Adjusted (NSA)
-    infl = infl.loc[infl["indic"] == "CP-HI00"]  # TODO
+    infl = infl.loc[infl["indic"] == "CP-HI00"]  # All items
 
     # Remove unnecessary columns after filtering for specific values
     infl = infl.iloc[:, 3:]
