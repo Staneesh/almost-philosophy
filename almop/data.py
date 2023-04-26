@@ -102,7 +102,7 @@ def get_hpi(
     # Remove unnecessary columns after filtering for specific values
     hpi = hpi.iloc[:, 3:]
     # Change a bogus column name to a more meaningful one
-    hpi = hpi.rename(columns={hpi.columns[0]: "country"})
+    hpi = hpi.rename(columns={hpi.columns[0]: "time"})
     # `country` should be a primary key & data transposed to have a row per time point
     hpi = hpi.set_index("country", drop=True).T
 
@@ -139,7 +139,7 @@ def get_gdp(
     # Remove unnecessary columns after filtering for specific values
     gdp = gdp.iloc[:, 3:]
     # Change a bogus column name to a more meaningful one
-    gdp = gdp.rename(columns={gdp.columns[0]: "country"})
+    gdp = gdp.rename(columns={gdp.columns[0]: "time"})
     # `country` should be a primary key & data transposed to have a row per time point
     gdp = gdp.set_index("country", drop=True).T
 
@@ -150,11 +150,14 @@ def get_infl(
     config: dict, only_these_country_codes: list = [], no_persist: bool = False
 ):
     """
-    TODO
+    Returns a DataFrame containing quarter-on-quarter
+    changes (growth rate) of Harmonised index of consumer prices
+    for (optionally) restricted list of country codes.
+
     `no_persist` should be used for unit testing purposes only.
     """
 
-    # Downloading House Price Index data
+    # Downloading Harmonised index of consumer prices data
     infl = load_dataset(
         config=config,
         source=SourceType.EUROSTAT,
@@ -166,14 +169,14 @@ def get_infl(
     if only_these_country_codes:
         infl = infl.loc[infl["geo\TIME_PERIOD"].isin(only_these_country_codes)]
 
-    infl = infl.loc[infl["unit"] == "RT12"]  # TODO
+    infl = infl.loc[infl["unit"] == "RT12"]  # Growth Rate
     infl = infl.loc[infl["s_adj"] == "NSA"]  # Not Seasonally Adjusted (NSA)
-    infl = infl.loc[infl["indic"] == "CP-HI00"]  # TODO
+    infl = infl.loc[infl["indic"] == "CP-HI00"]  # All items
 
     # Remove unnecessary columns after filtering for specific values
     infl = infl.iloc[:, 3:]
     # Change a bogus column name to a more meaningful one
-    infl = infl.rename(columns={infl.columns[0]: "country"})
+    infl = infl.rename(columns={infl.columns[0]: "time"})
     # `country` should be a primary key & data transposed to have a row per time point
     infl = infl.set_index("country", drop=True).T
 
