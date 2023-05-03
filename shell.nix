@@ -40,6 +40,11 @@ let
       pkgs.git
       pkgs.openssh
       pkgs.rsync
+
+      # for CUDA support
+      pkgs.cudatoolkit
+      pkgs.linuxPackages.nvidia_x11
+      pkgs.ncurses5
     ];
 
     shellHook = ''
@@ -48,6 +53,13 @@ let
 
       # Augment the dynamic linker path
       export "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${lib-path}"
+
+      # Export CUDA path 
+      export CUDA_PATH=${pkgs.cudatoolkit}
+
+      # More CUDA supprt
+      export EXTRA_LDFLAGS="-L/lib -L${pkgs.linuxPackages.nvidia_x11}/lib"
+      export EXTRA_CCFLAGS="-I/usr/include"
 
       # Setup the virtual environment if it doesn't already exist.
       VENV=.venv
