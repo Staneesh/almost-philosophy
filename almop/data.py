@@ -58,6 +58,7 @@ def load_dataset(
 
     # At this point the directory for data is surely created and the dataset needs
     # to be re-loaded either because it's not there at all or `pandas` is unable to read it.
+    data = 0
     logging.info(f"Pulling {dataset_source_name} from the internet...")
     if source == SourceType.EUROSTAT:
         data = es.get_data_df(dataset_name)  # This can throw!
