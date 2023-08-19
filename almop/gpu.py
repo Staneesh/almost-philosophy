@@ -8,7 +8,7 @@ import logging
 
 def set_memory_limits():
     device_count = cp.cuda.runtime.getDeviceCount()
-    logging.info( f"GPU module has found {device_count} devices. Setting memory limits..." )
+    logging.info( f"GPU module found {device_count} physical devices. Setting memory limits..." )
     
     mempool = cp.get_default_memory_pool()
     for device_id in range(device_count):
