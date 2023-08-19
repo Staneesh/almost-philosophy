@@ -4,6 +4,7 @@ This library is a collection of functions for compute-unit-agnostic functions th
 
 import cupy as cp 
 from cupyx.scipy import stats
+from scipy import stats 
 
 def zscore(a):
     xp = cp.get_array_module(a)
