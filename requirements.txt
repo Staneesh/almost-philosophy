@@ -13,3 +13,4 @@ nvidia-nccl-cu11
 nvidia-cudnn-cu11
 cupy-cuda11x
 scipy
+dowhy
