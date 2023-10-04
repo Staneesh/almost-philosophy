@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "dowhy-programs"
+version = "0.1.0"
+description = ""
+authors = ["Staneesh <blkreasons@outlook.com>"]
+readme = "README.md"
+packages = [{include = "dowhy_programs"}]
+
+[tool.poetry.scripts]
+main = "dowhy_programs.main:main"
+
+[tool.poetry.dependencies]
+python = ">=3.11, <3.12"
+pandas = "^2.1.1"
+dowhy = "^0.10.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
