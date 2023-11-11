@@ -1,0 +1,1 @@
+podman run --gpus all --runtime nvidia -p 8888:8888 -it -v $(pwd):/almost_philosophy:z -v /home/stanisz/wd4own/:/wd4own python-docker:latest bash
