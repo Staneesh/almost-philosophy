@@ -1,0 +1,4 @@
+#! /usr/bin/env nix-shell
+#! nix-shell -i fish -p podman fish
+
+podman run -it --rm --device nvidia.com/gpu=all --security-opt=label=disable --memory=90g --cpus=40 --mount=type=bind,source=(pwd),destination=/wd almop
