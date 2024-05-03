@@ -12,5 +12,6 @@ RUN pip install yfinance statsmodels
 RUN pip install pygraphviz
 RUN pip install networkx
 RUN pip install dowhy 
+RUN pip install wbdata
 
 ENTRYPOINT ["bash"]
